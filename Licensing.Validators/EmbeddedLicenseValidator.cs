@@ -269,8 +269,7 @@ namespace Licensing.Validators
             }
             try
             {
-                var currentTime = await _ntpClient.RequestTimeAsync();
-                return currentTime.NtpTime;
+                return await _ntpClient.GetNetworkTime();
             }
             catch
             {
