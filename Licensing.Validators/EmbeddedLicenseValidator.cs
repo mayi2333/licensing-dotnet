@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Management;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,34 +27,21 @@ namespace Licensing.Validators
         /// <summary>
         /// 验证授权信息
         /// </summary>
-        /// <param name="xmlLicensePath"></param>
+        /// <param name="xmlLicenseContents"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
-        /// <exception cref="CryptoSignatureVerificationFailedException"></exception>
-        /// <exception cref="LicenseExpiredException"></exception>
-        public override async Task AssertValidLicenseAsync(string xmlLicensePath)
+        public async Task ValidateLicenseAsync(string xmlLicenseContents, string name)
         {
             Guid userId = GetUserId();
-            //if (!File.Exists(xmlLicensePath))
-            //{
-            //    var showDialog = new LicensingValidatorForm(xmlLicensePath, userId).ShowDialog();
-            //    if (showDialog == System.Windows.Forms.DialogResult.Cancel)
-            //    {
-            //        System.Environment.Exit(System.Environment.ExitCode);
-            //    }
-            //    else if (!File.Exists(xmlLicensePath))
-            //    {
-            //        System.Environment.Exit(System.Environment.ExitCode);
-            //    }
-            //}
-            License license = LicenseParser.LoadLicenseFile(xmlLicensePath);
-
-            await ValidateLicenseAsync(license, userId);
+            License license = LicenseParser.LoadLicenseContent(xmlLicenseContents);
+            await ValidateLicenseAsync(license, userId, name);
         }
 
-        public async Task ValidateLicenseAsync(License license, Guid userId)
+        public async Task ValidateLicenseAsync(License license, Guid userId, string name)
         {
             License updatedLicense = await HandleUpdateableLicenseAsync(license);
             ValidateLicenseType(updatedLicense);
+            ValidateLicenseName(updatedLicense, name);
             ValidateLicenseUserId(updatedLicense, userId);
             //new XmlDocument().LoadXml(xmlLicenseContents);
             if (!IsValidLicenseCryptoSignature(updatedLicense))
@@ -66,7 +54,13 @@ namespace Licensing.Validators
                 throw new LicenseExpiredException($"许可证过期 {updatedLicense.ExpirationDate}");
             }
         }
-
+        private void ValidateLicenseName(License license, string name)
+        {
+            if (license.Name != name)
+            {
+                throw new LicenseExpiredException($"许可证name验证失败");
+            }
+        }
         private void ValidateLicenseUserId(License license, Guid userId)
         {
             if (license.UserId != userId)
@@ -268,37 +262,21 @@ namespace Licensing.Validators
         }
         private async Task<DateTime> GetCurrentDateTimeAsync()
         {
-            //var now = NTPTimeHelper.GetNetworkTime();
-            //if (now == DateTime.MinValue)
-            //{
-            //    throw new NetworkUnavailableException("获取当前时间异常");
-            //}
-            //return now;
-            //if (!NetworkInterface.GetIsNetworkAvailable())
-            //{
-            //    if (RequireNetworkTimeCheck)
-            //    {
-            //        throw new NetworkUnavailableException();
-            //    }
-
-            //    return DateTime.UtcNow;
-            //}
-
-            //try
-            //{
-            //    return (await _ntpClient.RequestTimeAsync()).NtpTime;
-            //}
-            //catch (Exception ex)
-            //{
-            //    if (RequireNetworkTimeCheck)
-            //    {
-            //        throw ex;
-            //    }
-
-            //    return DateTime.UtcNow;
-            //}
-
-            return (await _ntpClient.RequestTimeAsync()).NtpTime;
+            if (!NetworkInterface.GetIsNetworkAvailable())
+            {
+                if (RequireNetworkTimeCheck) throw new NetworkUnavailableException();
+                return DateTime.UtcNow;
+            }
+            try
+            {
+                var currentTime = await _ntpClient.RequestTimeAsync();
+                return currentTime.NtpTime;
+            }
+            catch
+            {
+                if (RequireNetworkTimeCheck) throw;
+                return DateTime.UtcNow;
+            }
         }
         private async Task<bool> IsLicenseExpiredAsync(License license)
         {
