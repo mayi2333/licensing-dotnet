@@ -1,17 +1,13 @@
-﻿using Fortelinea.Licensing.Core;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Yort.Ntp;
 
 namespace Licensing.Validators
 {
-    public class EmbeddedLicenseValidator : LicenseValidator
+    public class EmbeddedLicenseValidator: LicenseValidator
     {
         private readonly NtpClient _ntpClient = new NtpClient("time-a-b.nist.gov");
         /// <summary>
@@ -260,7 +256,7 @@ namespace Licensing.Validators
                 case LicenseType.Trial: throw new NotImplementedException();
             }
         }
-        private async Task<DateTime> GetCurrentDateTimeAsync()
+        protected override async Task<DateTime> GetCurrentDateTimeAsync()
         {
             if (!NetworkInterface.GetIsNetworkAvailable())
             {
