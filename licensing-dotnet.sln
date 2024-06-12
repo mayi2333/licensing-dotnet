@@ -5,6 +5,8 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Licensing.Validators", "Licensing.Validators\Licensing.Validators.csproj", "{DD213F9D-CD23-4723-BE7E-1951D24D3FDA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Licensing.Generator", "Licensing.Generator\Licensing.Generator.csproj", "{7B81BA6A-7A76-4BDA-9970-04F48BCBBD5F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{DD213F9D-CD23-4723-BE7E-1951D24D3FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD213F9D-CD23-4723-BE7E-1951D24D3FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD213F9D-CD23-4723-BE7E-1951D24D3FDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B81BA6A-7A76-4BDA-9970-04F48BCBBD5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B81BA6A-7A76-4BDA-9970-04F48BCBBD5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B81BA6A-7A76-4BDA-9970-04F48BCBBD5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B81BA6A-7A76-4BDA-9970-04F48BCBBD5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

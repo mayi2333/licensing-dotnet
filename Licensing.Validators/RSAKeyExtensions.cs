@@ -9,7 +9,7 @@ namespace Licensing.Validators
     ///     This implementation came from the issue(https://github.com/dotnet/core/issues/874)
     ///     Ifthe issue gets fixed in .NET Standard libraries, this class should be removed
     /// </summary>
-    internal static class RSAKeyExtensions
+    public static class RSAKeyExtensions
     {
         public static void FromXmlString(this RSA rsa, string xmlString)
         {
